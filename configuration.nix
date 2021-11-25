@@ -2,14 +2,13 @@
 # your system.  Help is available in the configuration.nix(5) man page
 # and in the NixOS manual (accessible by running ‘nixos-help’).
 
-{ config, pkgs, ... }:
+{ config, pkgs, lib, ... }:
 
 {
 
   imports = [ # Include the results of the hardware scan.
     <nixpkgs/nixos/modules/installer/scan/not-detected.nix>
     ./hardware-configuration.nix
-    ./network.nix
     ./home-manager/home-manager.nix
     ./configuration-fonts.nix
     ./configuration-packages.nix
@@ -17,7 +16,16 @@
     ./hardware.nix
     ./polkit.nix
     ./kernel.nix
+    ./network.nix
+    ./greetd.nix
+
   ];
+
+#VirtualBox
+
+services.gvfs.enable = true;
+
+
 
 #Enable nonfree and unstable
   nixpkgs.config = {
@@ -35,13 +43,10 @@
   
   nix.autoOptimiseStore = true;
   networking.hostId = "d1be0afd";
-  services.gvfs.enable = true;
-  services.earlyoom.enable = true;
-  services.earlyoom.freeMemThreshold = 5;
-  services.earlyoom.freeSwapThreshold = 10;
-  services.earlyoom.useKernelOOMKiller = true;
-  services.dbus.packages = with pkgs; [ gnome3.dconf ];
-  environment.variables.EDITOR = "nvim";
+  virtualisation.docker.enable = false;
+
+  environment.systemPackages = with pkgs; [ lxqt.lxqt-policykit ]; # provides a default authentification client for policykit
+  
 
   # Networking
  
@@ -50,9 +55,10 @@
   networking.networkmanager.enable = true;
   programs.nm-applet.enable = true;
   services.openssh.enable = true;
-  networking.firewall.enable = true;
+  networking.firewall.logRefusedConnections = false;
   networking.firewall.allowedTCPPorts = [ 8868 4668 4679 22 ];
-  networking.firewall.allowedUDPPorts = [8868 4679 ];
+  networking.firewall.allowedUDPPorts = [8868 4679 69];
+
   #networking.interfaces.enp7s0.useDHCP = true;
 
 
@@ -65,29 +71,48 @@
 
   # Set your time zone.
   time.timeZone = "Europe/Moscow";
-
+  
 
   
+  #Enable flatpak
+  services.flatpak.enable = true;
+  xdg.portal.enable = true;  
 
   #User and shell settings
 
   programs.bash.enableLsColors = true;
   programs.bash.vteIntegration = true;
   programs.bash.enableCompletion = true;
-  programs.tmux = {
-  enable = true;
-  newSession = true;
-};
 
-
-
+  #Android
+  programs.adb.enable = true;
 
  users.users.shpinog = {
     isNormalUser = true;
-    extraGroups = [ "wheel" "networkmanager" "storage" "media" "docker" "lp" ]; # Enable ‘sudo’ for the user.
+    extraGroups = [ "wheel" "networkmanager" "adbusers" "storage" "media" "docker" "lp" "corectrl" ]; # Enable ‘sudo’ for the user.A
     shell = pkgs.bash;
   };
 
+
+
+  #  hardware.opengl =
+  #   let
+  #     pkgsMesaClover = import
+  #       (pkgs.fetchFromGitHub {
+  #         owner = "NixOS";
+  #         repo = "nixpkgs";
+  #         rev = "b41d29dd317255756acea206aa24ba49765c39ba";
+  #         sha256 = "0x8k1vifha417x4mxzdf33acgyf8rg69ipbap2nm9s08fhwz6436";
+  #       })
+  #       { inherit (pkgs) system; };
+  #   in
+  #   {
+  #     enable = true;
+  #     driSupport = true;
+  #     extraPackages = [
+  #       pkgsMesaClover.mesa.opencl
+  #     ];
+  #  };
 
 
   # This value determines the NixOS release from which the default
@@ -96,7 +121,7 @@
   # this value at the release version of the first install of this system.
   # Before changing this value read the documentation for this option
   # (e.g. man configuration.nix or on https://nixos.org/nixos/options.html).
-  system.stateVersion = "21.05"; # Did you read the comment?
+  system.stateVersion = "20.03"; # Did you read the comment?
 
 }
 

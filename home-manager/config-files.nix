@@ -7,9 +7,10 @@
 
   home.file = {
     ".config/kitty/kitty.conf".source = ../configFiles/kitty.conf; #kitty config
+    ".config/sway/config".source = ../configFiles/sway/config; #sway config
     ".config/ranger".source = ../configFiles/ranger; #ranger config
-    "/.tmux.conf".source = ../configFiles/.tmux/.tmux.conf; #tmux config
-    "/.tmux.conf.local".source = ../configFiles/.tmux/.tmux.conf.local; #tmux config
+    # "/.tmux.conf".source = ../configFiles/.tmux/.tmux.conf; #tmux config
+    # "/.tmux.conf.local".source = ../configFiles/.tmux/.tmux.conf.local; #tmux config
 
   };
 

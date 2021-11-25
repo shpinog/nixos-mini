@@ -23,6 +23,7 @@ in
       ./packages.nix
       ./settings.nix
       ./config-files.nix
+      ./aliases.nix
     ];
 
   };

@@ -1,0 +1,371 @@
+# Default config for sway
+#
+# Copy this to ~/.config/sway/config and edit it to your liking.
+#
+# Read `man 5 sway` for a complete reference.
+
+
+
+focus_follows_mouse no
+#disable Xwayland
+xwayland enable
+
+#disable title bar
+default_border none
+### Variables
+
+#
+# Logo key. Use Mod1 for Alt.
+
+set $mod Mod4
+
+# Home row direction keys, like vim
+set $left h
+set $down j
+set $up k
+set $right l
+
+#Swaybg
+
+
+
+### Output configuration
+
+#
+# Default wallpaper
+#output * bg ~/.config/sway/backgrounds/Sway_Wallpaper_Blue_1920x1080.png fill
+#
+# Example configuration:
+#
+#   output HDMI-A-1 resolution 1920x1080 position 1920,0
+#
+# You can get the names of your outputs by running: swaymsg -t get_outputs
+
+
+### Idle configuration
+#
+# Example configuration:
+#
+ exec swayidle -w \
+          timeout 3600 'swaylock -f -c 000000' \
+          timeout 3630 'swaymsg "output * dpms off"' resume 'swaymsg "output * dpms on"' \
+          before-sleep 'swaylock -f -c 000000'
+#
+# This will lock your screen after 300 seconds of inactivity, then turn off
+# your displays after another 300 seconds, and turn your screens back on when
+# resumed. It will also lock your screen before your computer goes to sleep.
+
+### Input configuration
+#
+# Example configuration:
+#
+#   input "2:14:SynPS/2_Synaptics_TouchPad" {
+#       dwt enabled
+#       tap enabled
+#       natural_scroll enabled
+#       middle_emulation enabled
+#   }
+#
+# You can get the names of your inputs by running: swaymsg -t get_inputs
+# Read `man 5 sway-input` for more information about this section.
+#
+
+#Binding to open a program on a new workspace
+set $workspace_new swaymsg -t get_workspaces -r | expr $(jq '[.[].num] | max') + 1 | xargs swaymsg workspace number && swaymsg exec --
+
+# Your apps
+set $term foot
+set $browser google-chrome-beta
+set $filemanager nautilus
+set $editor codium
+set $telegram telegram-desktop
+set $spotify spotify
+
+
+
+
+
+#####flashfocus
+
+
+
+# Your preferred application launcher
+# Note: pass the final command to swaymsg so that the resulting window can be opened
+# on the original workspace that the command was run on.
+set $menu dmenu_path | dmenu | xargs swaymsg exec --
+
+### Key bindings
+#
+# Basics:
+#
+    # Start a terminal
+    bindsym --to-code $mod+Return exec $term
+    # Start --to-code a browser
+    bindsym --to-code $mod+q exec $browser
+    # Start --to-code a filemanager
+    bindsym --to-code KP_Insert+KP_Left exec  $filemanager
+    # Start --to-code a editor
+    bindsym --to-code KP_Insert+KP_Begin exec $editor
+    # Start --to-code a filemanager
+    bindsym --to-code KP_Insert+KP_Home exec $telegram
+     # Start --to-code a Spotify
+    bindsym --to-code KP_Insert+KP_Up exec $spotify
+
+
+    # take  --to-codescreen
+    bindsym --to-code $mod+p exec grim -g "$(slurp)" -t png - | wl-copy -t image/png
+
+    # Kill  --to-codefocused window
+    bindsym --to-code $mod+c kill
+
+    # Start --to-code your launcher
+    bindsym --to-code $mod+r exec wofi --show drun -i
+
+    # Drag floating windows by holding down $mod and left mouse button.
+    # Resize them with right mouse button + $mod.
+    # Despite the name, also works for non-floating windows.
+    # Change normal to inverse to use left mouse button for resizing and right
+    # mouse button for dragging.
+    floating_modifier $mod normal
+
+    # Reload the configuration file
+    bindsym --to-code $mod+Shift+r reload
+
+    # Exit sway (logs you out of your Wayland session)
+    bindsym --to-code $mod+Shift+e exec swaynag -t warning -m 'You pressed the exit shortcut. Do you really want to exit sway? This will end your Wayland session.' -b 'Yes, exit sway' 'swaymsg exit'
+#
+# Moving around:
+#
+    # Move your focus around
+    bindsym --to-code $mod+l focus left
+    bindsym --to-code $mod+j focus down
+    bindsym --to-code $mod+k focus up
+    bindsym --to-code $mod+h focus right
+    # Or use $mod+[up|down|left|right]
+    bindsym $mod+Left focus left
+    bindsym $mod+Down focus down
+    bindsym $mod+Up focus up
+    bindsym  $mod+Right focus right
+
+    # Move t he focused window with the same, but add Shift
+    bindsym --to-code $mod+Shift+$left move left
+    bindsym --to-code $mod+Shift+$down move down
+    bindsym --to-code $mod+Shift+$up move up
+    bindsym --to-code $mod+Shift+$right move right
+    # Ditto, with arrow keys
+    bindsym --to-code $mod+Shift+Left move left
+    bindsym --to-code $mod+Shift+Down move down
+    bindsym --to-code $mod+Shift+Up move up
+    bindsym --to-code $mod+Shift+Right move right
+#
+# Workspaces:
+#
+    # Workspace names
+    set $ws1 "1": 
+    set $ws2 "2": 🌐
+    set $ws3 "3": 
+    set $ws4 "4": 🎮
+    set $ws5 "5": 🎶
+    set $ws6 "6": 💬
+    set $ws7 "7"
+    set $ws8 "8"
+    set $ws9 "9"
+    set $ws0 "10"
+
+### Some windows setting
+
+    hide_edge_borders smart_no_gaps
+    smart_borders on
+    gaps inner 10
+    smart_gaps  on
+
+### Windows Layouts
+
+
+
+### Alt-tab switch Workspace and next
+    bindsym Mod1+Tab workspace back_and_forth
+    bindsym $mod+Tab workspace next
+
+### Assign apps to workspaces
+    ####-1-####
+    assign [app_id="^foot"] → $ws1
+    for_window [app_id="foot"] move window to workspace "$ws1", focus, opacity $opacity
+    ####-2-####
+    assign [app_id="^firefox"] → $ws2
+    for_window [app_id="firefox"] move window to workspace "$ws2", focus
+    assign [app_id="^chromium"] → $ws2
+    for_window [app_id="chromium"] move window to workspace "$ws2", focus
+    ####-3-####
+    assign [app_id="mpv"] → $ws3
+    for_window [app_id="mpv"] move window to workspace "$ws3", focus
+    assign [app_id="^org.gnome.Nautilus"] → $ws3
+    for_window [app_id="^org.gnome.Nautilus"] move window to workspace "$ws3", focus
+    ####-4-####
+    assign [class="^Steam"] → $ws4
+    assign [class="^dota2"] → $ws4
+    ####-5-####
+    for_window [class="Spotify"] move window to workspace "$ws5", focus
+    ####-6-####
+
+    assign [app_id="^kotatogramdesktop"] → $ws6
+    assign [app_id="^telegramdesktop"] → $ws6
+    for_window [app_id="^kotatogramdesktop"] move window to workspace "$ws6", focus
+    for_window [app_id="^telegramdesktop"] move window to workspace "$ws6", focus
+    ####-7-####
+#
+    ####-8-####
+    # Auto float apps
+    for_window [app_id="gnome-calculator"] floating enable
+    #for_window [class="^Caja$"] floating enable
+    for_window [app_id="^mpv$"] floating enable
+    for_window [app_id="pavucontrol"] floating enable
+    for_window [class="^Thunar$"] floating enable
+    for_window [class="^steam$"] floating enable
+    for_window [title="Firefox - Sharing Indicator"] floating enable
+
+    ### opacity
+    set $opacity 0.9
+    for_window [class=".*"] opacity $opacity
+    for_window [app_id=".*"] opacity $opacity
+
+    # Switch to workspace
+    bindsym $mod+1 workspace $ws1
+    bindsym $mod+2 workspace $ws2
+    bindsym $mod+3 workspace $ws3
+    bindsym $mod+4 workspace $ws4
+    bindsym $mod+5 workspace $ws5
+    bindsym $mod+6 workspace $ws6
+    bindsym $mod+7 workspace $ws7
+    bindsym $mod+8 workspace $ws8
+    bindsym $mod+9 workspace $ws9
+    bindsym $mod+0 workspace $ws0
+    # Move focused container to workspace
+    bindsym $mod+Shift+1 move container to workspace $ws1
+    bindsym $mod+Shift+2 move container to workspace $ws2
+    bindsym $mod+Shift+3 move container to workspace $ws3
+    bindsym $mod+Shift+4 move container to workspace $ws4
+    bindsym $mod+Shift+5 move container to workspace $ws5
+    bindsym $mod+Shift+6 move container to workspace $ws6
+    bindsym $mod+Shift+7 move container to workspace $ws7
+    bindsym $mod+Shift+8 move container to workspace $ws8
+    bindsym $mod+Shift+9 move container to workspace $ws9
+    bindsym $mod+Shift+0 move container to workspace $ws0
+    # Note: workspaces can have any name you want, not just numbers.
+    # We just use 1-10 as the default.
+#
+# Layout stuff:
+#
+    # You can "split" the current object of your focus with
+    # $mod+b or $mod+v, for horizontal and vertical splits
+    # respectively.
+    bindsym $mod+b splith
+    bindsym $mod+v splitv
+
+    # Switch the current container between different layout styles
+    bindsym --to-code $mod+s layout stacking
+    bindsym --to-code $mod+w layout tabbed
+    bindsym --to-code $mod+e layout toggle split
+
+    # Make the current focus fullscreen
+    bindsym  --to-code $mod+f fullscreen
+
+    # Toggle the current focus between tiling and floating mode
+    bindsym  --to-code $mod+Shift+space floating toggle
+
+    # Swap focus between the tiling area and the floating area
+    bindsym $mod+space focus mode_toggle
+
+    # Move focus to the parent container
+    bindsym  --to-code $mod+a focus parent
+#
+# Scratchpad:
+#
+    # Sway has a "scratchpad", which is a bag of holding for windows.
+    # You can send windows there and get them back later.
+
+    # Move the currently focused window to the scratchpad
+    bindsym  --to-code $mod+n move scratchpad
+
+    # Show the next scratchpad window or hide the focused scratchpad window.
+    # If there are multiple scratchpad windows, this command cycles through them.
+    bindsym  --to-code $mod+Shift+n scratchpad show
+#
+# Resizing containers:
+#
+mode "resize" {
+    # left will shrink the containers width
+    # right will grow the containers width
+    # up will shrink the containers height
+    # down will grow the containers height
+    bindsym $left resize shrink width 10px
+    bindsym $down resize grow height 10px
+    bindsym $up resize shrink height 10px
+    bindsym $right resize grow width 10px
+
+    # Ditto, with arrow keys
+    bindsym Left resize shrink width 10px
+    bindsym Down resize grow height 10px
+    bindsym Up resize shrink height 10px
+    bindsym Right resize grow width 10px
+
+    # Return to default mode
+    bindsym Return mode "default"
+    bindsym Escape mode "default"
+}
+bindsym $mod+i mode "resize"
+
+#
+#Keyboard layout
+input * {
+    xkb_layout "us,ru"
+    xkb_options "grp:caps_toggle"
+}
+
+input <identifier> xkb_model "pc101"
+
+
+#
+# Status Bar:
+#
+# Read `man 5 sway-bar` for more information about this section.
+#
+#
+bar {
+    position top
+    swaybar_command waybar
+
+    # When the status_command prints a new line to stdout, swaybar updates.
+    # The default just shows the current date and time.
+    status_command while date +'%Y-%m-%d %l:%M:%S %p'; do sleep 1; done
+
+    colors {
+        statusline #ffffff
+        background #323232
+        inactive_workspace #32323200 #32323200 #5c5c5c
+    }
+}
+
+##autostart
+
+
+exec autotiling
+exec_always --no-startup-id flashfocus
+exec swaykbdd
+exec wl-paste -p -t text --watch clipman store -P --histpath="~/.local/share/clipman-primary.json" --no-startup-id flashfocus
+bindsym $mod+o exec clipman pick -t wofi
+exec_always nm-applet --indicator &
+exec udiskie   --tray &
+exec systemctl --user import-environment DISPLAY WAYLAND_DISPLAY SWAYSOCK
+exec hash dbus-update-activation-environment 2>/dev/null && \
+     dbus-update-activation-environment --systemd DISPLAY WAYLAND_DISPLAY SWAYSOCK
+exec wl-paste -t text --watch clipman store
+
+##gtk theme
+exec_always {
+    gsettings set $gnome-schema gtk-theme 'yaru'
+    gsettings set $gnome-schema icon-theme 'yaru'
+    gsettings set $gnome-schema cursor-theme 'yaru'
+    gsettings set $gnome-schema font-name 'Noto'
+}
+

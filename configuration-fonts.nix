@@ -8,19 +8,25 @@
     enableDefaultFonts = true;
     fonts = with pkgs; [
       ubuntu_font_family
-      inconsolata-nerdfont
-      twemoji-color-font
+      noto-fonts-emoji
+      font-awesome
+      font-awesome_4
+      unifont
       joypixels
       dejavu_fonts
-      ubuntu_font_family
     ];
 
-    fontconfig.enable = true;
+    fontconfig = {
+	enable = true;
 
-    fontconfig.defaultFonts = {
+    defaultFonts = {
       serif = [ "Ubuntu" "Noto" ];
       sansSerif = [ "Ubuntu" "Noto" ];
       monospace = [ "Sans" ];
+      emoji = [ "Noto Color Emoji" "Twitter Color Emoji" "JoyPixels" "Unifont" "Unifont Upper"];
+
     };
+   };
   };
+
 }
